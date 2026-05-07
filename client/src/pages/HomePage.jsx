@@ -78,7 +78,7 @@ const HomePage = () => (
         className="absolute inset-0 h-full w-full object-cover"
       />
       <div className="absolute inset-0 bg-hero-scrim" />
-      <div className="relative mx-auto flex min-h-[530px] max-w-[1080px] items-center px-5 py-20 sm:px-6 lg:py-24">
+      <div className="relative mx-auto flex min-h-[530px] max-w-[1500px] xl:max-w-[1800px] items-center px-5 py-20 sm:px-6 lg:py-24">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -113,7 +113,7 @@ const HomePage = () => (
       </div>
     </section>
 
-    <div className="relative z-10 mx-auto -mt-[54px] w-full max-w-[980px] px-5 sm:px-6">
+    <div className="relative z-10 mx-auto -mt-[54px] w-full max-w-[1500px] xl:max-w-[1800px] px-5 sm:px-6">
       <motion.form
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
@@ -150,7 +150,7 @@ const HomePage = () => (
       </motion.form>
     </div>
 
-    <section className="mx-auto max-w-[1080px] px-5 pb-16 pt-24 sm:px-6 lg:pb-20 lg:pt-24">
+    <section className="mx-auto max-w-[1500px] xl:max-w-[1800px] px-5 pb-16 pt-24 sm:px-6 lg:pb-20 lg:pt-24">
       <motion.div {...reveal}>
         <SectionHeader
           title="Discover our idyllic countryside cabins"
@@ -167,7 +167,7 @@ const HomePage = () => (
     </section>
 
     <section className="bg-mint py-16 lg:py-20">
-      <div className="mx-auto max-w-[1080px] px-5 sm:px-6">
+      <div className="mx-auto max-w-[1500px] xl:max-w-[1800px] px-5 sm:px-6">
         <motion.div {...reveal}>
           <SectionHeader
             title="Inspiration for your next getaway"
@@ -191,7 +191,7 @@ const HomePage = () => (
         className="absolute inset-0 h-full w-full object-cover"
       />
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,17,17,0.25)_0%,rgba(8,17,17,0.42)_42%,rgba(8,17,17,0.84)_100%)]" />
-      <div className="relative mx-auto grid min-h-[430px] max-w-[1080px] px-5 py-16 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:items-center">
+      <div className="relative mx-auto grid min-h-[430px] max-w-[1500px] xl:max-w-[1800px] px-5 py-16 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:items-center">
         <div className="hidden lg:block" />
         <motion.div {...reveal} className="max-w-[460px] lg:ml-auto">
           <h2 className="font-display text-4xl font-black leading-tight text-white sm:text-[2.8rem]">
@@ -207,7 +207,7 @@ const HomePage = () => (
     </section>
 
     <section className="bg-white py-16 lg:py-20">
-      <div className="mx-auto grid max-w-[1080px] gap-12 px-5 sm:px-6 lg:grid-cols-[0.76fr_1.24fr] lg:items-center">
+      <div className="mx-auto grid max-w-[1500px] xl:max-w-[1800px] gap-12 px-5 sm:px-6 lg:grid-cols-[0.76fr_1.24fr] lg:items-center">
         <motion.div {...reveal}>
           <h2 className="section-underline max-w-[330px] font-display text-[1.45rem] font-black leading-snug text-ink sm:max-w-none sm:text-[1.7rem]">
             {mediaSection.title}
@@ -239,7 +239,7 @@ const HomePage = () => (
     </section>
 
     <section className="bg-mint py-16 lg:py-20">
-      <div className="mx-auto max-w-[1080px] px-5 sm:px-6">
+      <div className="mx-auto max-w-[1500px] xl:max-w-[1800px] px-5 sm:px-6">
         <motion.div {...reveal} className="relative min-h-[360px] overflow-hidden rounded-md bg-footer">
           <img
             src={ctaSection.image}
@@ -263,7 +263,7 @@ const HomePage = () => (
     </section>
 
     <section className="bg-white py-16 lg:py-20">
-      <div className="mx-auto grid max-w-[1080px] gap-12 px-5 sm:px-6 lg:grid-cols-[0.82fr_1.18fr]">
+      <div className="mx-auto grid max-w-[1500px] xl:max-w-[1800px] gap-12 px-5 sm:px-6 lg:grid-cols-[0.82fr_1.18fr]">
         <motion.div {...reveal}>
           <h2 className="font-display text-2xl font-black leading-snug text-primary sm:text-[1.7rem]">
             Frequently asked questions
@@ -309,7 +309,7 @@ const HomePage = () => (
         className="absolute inset-0 h-full w-full object-cover"
       />
       <div className="absolute inset-0 bg-bottom-scrim" />
-      <div className="relative mx-auto flex min-h-[520px] max-w-[1080px] items-center px-5 py-20 sm:px-6">
+      <div className="relative mx-auto flex min-h-[520px] max-w-[1500px] xl:max-w-[1800px] items-center px-5 py-20 sm:px-6">
         <motion.div {...reveal} className="max-w-[500px]">
           <h2 className="font-display text-4xl font-black leading-tight text-white sm:text-[2.8rem]">
             {escapeSection.title}

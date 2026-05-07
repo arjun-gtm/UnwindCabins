@@ -20,7 +20,7 @@ const Navbar = () => {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-white/95 backdrop-blur-md">
+    <header className="z-50 border-b border-line bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-[76px] max-w-[1080px] items-center justify-between px-5 sm:px-6">
         <Link to="/" aria-label="UnwindCabins home" onClick={() => setOpen(false)}>
           <Brand />
