@@ -1,8 +1,6 @@
-const auth = require('./authMiddleware');
+import { auth } from './authMiddleware.js';
 
-const adminAuth = (req, res, next) => {
+export const adminAuth = (req, res, next) => {
   if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admin access required' });
   next();
 };
-
-module.exports = adminAuth;

@@ -1,8 +1,9 @@
-const express = require('express');
-const { register, login } = require('../controllers/adminController');
-const User = require('../models/User');
-const auth = require('../middleware/authMiddleware');
-const adminAuth = require('../middleware/adminAuth');
+import express from 'express';
+import { register, login } from '../controllers/adminController.js';
+import User from '../models/User.js';
+import { auth } from '../middleware/authMiddleware.js';
+import { adminAuth } from '../middleware/adminAuth.js';
+
 const router = express.Router();
 
 router.post('/register', register);
@@ -27,4 +28,4 @@ router.delete('/users/:id', auth, adminAuth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
-const auth = (req, res, next) => {
+export const auth = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) return res.status(401).json({ message: 'No token provided' });
 
@@ -12,5 +12,3 @@ const auth = (req, res, next) => {
     res.status(401).json({ message: 'Invalid token' });
   }
 };
-
-module.exports = auth;

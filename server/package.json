@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Backend for UnwindCabins",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "server": "nodemon server.js",
     "dev": "nodemon server.js"
