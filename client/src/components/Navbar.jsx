@@ -21,7 +21,7 @@ const Navbar = () => {
 
   return (
     <header className="z-50 border-b border-line bg-white/95 backdrop-blur-md">
-      <div className="mx-auto flex h-[76px] max-w-[1080px] items-center justify-between px-5 sm:px-6">
+      <div className="mx-auto flex h-[76px] max-w-[1500px] xl:max-w-[1800px] items-center justify-between px-5 sm:px-6">
         <Link to="/" aria-label="UnwindCabins home" onClick={() => setOpen(false)}>
           <Brand />
         </Link>
@@ -62,7 +62,7 @@ const Navbar = () => {
 
       {open && (
         <div className="border-t border-line bg-white lg:hidden">
-          <div className="mx-auto flex max-w-[1080px] flex-col gap-1 px-5 py-4 sm:px-6">
+          <div className="mx-auto flex max-w-[1500px] xl:max-w-[1800px] flex-col gap-1 px-5 py-4 sm:px-6">
             {navItems.map((item) => (
               <NavLink
                 key={`${item.to}-${item.label}-mobile`}

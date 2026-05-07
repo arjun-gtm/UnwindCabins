@@ -14,7 +14,7 @@ const socialLinks = [
 const Footer = () => {
   return (
     <footer className="bg-footer text-white">
-      <div className="mx-auto max-w-[1080px] px-5 py-16 sm:px-6 lg:py-20">
+      <div className="mx-auto max-w-[1500px] xl:max-w-[1800px] px-5 py-16 sm:px-6 lg:py-20">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[0.7fr_0.78fr_1.35fr_0.62fr]">
           {footerLinks.map((group) => (
             <div key={group.title}>
