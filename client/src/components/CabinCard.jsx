@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Heart, Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -19,6 +20,32 @@ const Rating = ({ value, reviews }) => (
 )
 
 const CabinCard = ({ cabin }) => {
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    try {
+      const storedFavorites = JSON.parse(localStorage.getItem('unwind-favorites') || '[]')
+      setSaved(storedFavorites.includes(cabin.id))
+    } catch {
+      setSaved(false)
+    }
+  }, [cabin.id])
+
+  const toggleFavorite = () => {
+    try {
+      const storedFavorites = JSON.parse(localStorage.getItem('unwind-favorites') || '[]')
+      const updatedFavorites = storedFavorites.includes(cabin.id)
+        ? storedFavorites.filter((item) => item !== cabin.id)
+        : [...storedFavorites, cabin.id]
+
+      localStorage.setItem('unwind-favorites', JSON.stringify(updatedFavorites))
+      setSaved((current) => !current)
+    } catch {
+      localStorage.setItem('unwind-favorites', JSON.stringify([cabin.id]))
+      setSaved(true)
+    }
+  }
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 18 }}
@@ -36,10 +63,14 @@ const CabinCard = ({ cabin }) => {
         />
         <button
           type="button"
-          className="absolute right-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-md bg-footer/80 text-white transition duration-200 hover:bg-primary"
-          aria-label={`Save ${cabin.title}`}
+          className={`absolute right-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-md transition duration-200 ${
+            saved ? 'bg-primary text-white hover:bg-primary-dark' : 'bg-footer/80 text-white hover:bg-primary'
+          }`}
+          aria-label={`${saved ? 'Unsave' : 'Save'} ${cabin.title}`}
+          aria-pressed={saved}
+          onClick={toggleFavorite}
         >
-          <Heart size={18} />
+          <Heart size={18} className={saved ? 'fill-current' : ''} />
         </button>
       </div>
 

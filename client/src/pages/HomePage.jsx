@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, CalendarDays, MapPinned, Play, Star, UsersRound } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Button from '../components/Button'
 import CabinCard from '../components/CabinCard'
 import InspirationCard from '../components/InspirationCard'
@@ -69,9 +70,35 @@ const SearchField = ({ icon: Icon, label, children }) => (
   </label>
 )
 
-const HomePage = () => (
-  <div className="overflow-hidden bg-white">
-    <section className="relative min-h-[530px] overflow-hidden bg-footer text-white">
+const HomePage = () => {
+  const navigate = useNavigate()
+  const [searchValues, setSearchValues] = useState({
+    where: '',
+    checkIn: '',
+    checkOut: '',
+    guests: '2 guests',
+  })
+
+  const handleSearchChange = (field) => (event) => {
+    setSearchValues((prev) => ({ ...prev, [field]: event.target.value }))
+  }
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault()
+
+    const params = new URLSearchParams()
+    if (searchValues.where.trim()) params.set('where', searchValues.where.trim())
+    if (searchValues.checkIn) params.set('checkIn', searchValues.checkIn)
+    if (searchValues.checkOut) params.set('checkOut', searchValues.checkOut)
+    if (searchValues.guests) params.set('guests', searchValues.guests)
+
+    const queryString = params.toString()
+    navigate(`/cabins${queryString ? `?${queryString}` : ''}`)
+  }
+
+  return (
+    <div className="overflow-hidden bg-white">
+      <section className="relative min-h-[530px] overflow-hidden bg-footer text-white">
       <img
         src={heroData.image}
         alt="Cabin surrounded by forest"
@@ -118,7 +145,7 @@ const HomePage = () => (
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, delay: 0.12, ease: 'easeOut' }}
-        onSubmit={(event) => event.preventDefault()}
+        onSubmit={handleSearchSubmit}
         className="w-full min-w-0 max-w-[350px] rounded-md bg-white p-6 shadow-search sm:mx-auto sm:max-w-none"
       >
         <div className="grid min-w-0 gap-2 md:grid-cols-[1.45fr_1fr_1fr_1fr_1.55fr]">
@@ -126,18 +153,34 @@ const HomePage = () => (
             <input
               type="text"
               placeholder="I want to go"
+              value={searchValues.where}
+              onChange={handleSearchChange('where')}
               className="min-w-0 w-full bg-transparent text-sm text-ink outline-none placeholder:text-body"
             />
           </SearchField>
           <SearchField icon={CalendarDays} label="Check in">
-            <input type="text" placeholder="Check in" className="min-w-0 w-full bg-transparent text-sm text-ink outline-none placeholder:text-body" />
+            <input
+              type="date"
+              value={searchValues.checkIn}
+              onChange={handleSearchChange('checkIn')}
+              className="min-w-0 w-full rounded-md border border-line bg-white px-3 py-2 text-sm text-ink outline-none placeholder:text-body focus:border-primary focus:ring-4 focus:ring-primary/20"
+            />
           </SearchField>
           <SearchField icon={CalendarDays} label="Check out">
-            <input type="text" placeholder="Check out" className="min-w-0 w-full bg-transparent text-sm text-ink outline-none placeholder:text-body" />
+            <input
+              type="date"
+              value={searchValues.checkOut}
+              onChange={handleSearchChange('checkOut')}
+              className="min-w-0 w-full rounded-md border border-line bg-white px-3 py-2 text-sm text-ink outline-none placeholder:text-body focus:border-primary focus:ring-4 focus:ring-primary/20"
+            />
           </SearchField>
           <SearchField icon={UsersRound} label="Travellers">
-            <select className="min-w-0 w-full appearance-none bg-transparent text-sm text-body outline-none">
-              <option>Travellers</option>
+            <select
+              value={searchValues.guests}
+              onChange={handleSearchChange('guests')}
+              className="min-w-0 w-full appearance-none bg-transparent text-sm text-body outline-none"
+            >
+              <option>1 guest</option>
               <option>2 guests</option>
               <option>3 guests</option>
               <option>4 guests</option>
@@ -322,6 +365,7 @@ const HomePage = () => (
       </div>
     </section>
   </div>
-)
+  )
+}
 
 export default HomePage

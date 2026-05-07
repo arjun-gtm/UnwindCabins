@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Globe2, Heart, Link2, Mail, MessageCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { footerLinks } from '../data/content'
@@ -12,6 +13,28 @@ const socialLinks = [
 ]
 
 const Footer = () => {
+  const [newsletterEmail, setNewsletterEmail] = useState('')
+  const [newsletterStatus, setNewsletterStatus] = useState(null)
+
+  const validateEmail = (value) => /^\S+@\S+\.\S+$/.test(value)
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+
+    if (!newsletterEmail.trim()) {
+      setNewsletterStatus({ type: 'error', message: 'Please enter an email address to subscribe.' })
+      return
+    }
+
+    if (!validateEmail(newsletterEmail.trim())) {
+      setNewsletterStatus({ type: 'error', message: 'Please enter a valid email address.' })
+      return
+    }
+
+    setNewsletterStatus({ type: 'success', message: 'Thanks for subscribing! We will keep you updated with the latest cabin ideas.' })
+    setNewsletterEmail('')
+  }
+
   return (
     <footer className="bg-footer text-white">
       <div className="mx-auto max-w-[1500px] xl:max-w-[1800px] px-5 py-16 sm:px-6 lg:py-20">
@@ -43,19 +66,33 @@ const Footer = () => {
               For a weekly curated collection of 3 things you can watch, read or listen to switch off from the busy everyday.
             </p>
           </div>
-          <form className="flex flex-col gap-3 sm:flex-row lg:justify-end">
-            <input
-              type="email"
-              placeholder="james@thegiantpeach.com"
-              className="min-h-12 min-w-0 flex-1 rounded-md border border-white/10 bg-white px-5 text-sm text-ink outline-none transition duration-200 placeholder:text-muted focus:border-[#9bf5d2] focus:ring-4 focus:ring-[#9bf5d2]/20 sm:max-w-[320px]"
-            />
-            <button
-              type="submit"
-              className="min-h-12 rounded-md bg-accent px-7 text-sm font-semibold text-ink transition duration-200 hover:bg-accent-dark focus:outline-none focus:ring-4 focus:ring-accent/30"
-            >
-              Join the mailing list
-            </button>
-          </form>
+          <div>
+            <form className="flex flex-col gap-3 sm:flex-row lg:justify-end" onSubmit={handleSubmit} noValidate>
+              <input
+                type="email"
+                placeholder="james@thegiantpeach.com"
+                value={newsletterEmail}
+                onChange={(event) => setNewsletterEmail(event.target.value)}
+                className="min-h-12 min-w-0 flex-1 rounded-md border border-white/10 bg-white px-5 text-sm text-ink outline-none transition duration-200 placeholder:text-muted focus:border-[#9bf5d2] focus:ring-4 focus:ring-[#9bf5d2]/20 sm:max-w-[320px]"
+              />
+              <button
+                type="submit"
+                className="min-h-12 rounded-md bg-accent px-7 text-sm font-semibold text-ink transition duration-200 hover:bg-accent-dark focus:outline-none focus:ring-4 focus:ring-accent/30"
+              >
+                Join the mailing list
+              </button>
+            </form>
+            {newsletterStatus && (
+              <p
+                className={`mt-3 text-sm ${
+                  newsletterStatus.type === 'success' ? 'text-[#d1fae5]' : 'text-[#fde68a]'
+                }`}
+                aria-live="polite"
+              >
+                {newsletterStatus.message}
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="mt-12 border-t border-primary/50 pt-10 sm:flex sm:items-center sm:justify-between">
