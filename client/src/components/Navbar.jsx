@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Menu, UserRound, X } from 'lucide-react'
+import { useAuth } from '../services/authService'
 
 const navItems = [
   { label: 'Our cabins', to: '/cabins' },
@@ -18,6 +19,13 @@ const Brand = ({ light = false }) => (
 
 const Navbar = () => {
   const [open, setOpen] = useState(false)
+  const navigate = useNavigate()
+  const { user, isAuthenticated, logout } = useAuth()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
 
   return (
     <header className="z-50 border-b border-line bg-white/95 backdrop-blur-md">
@@ -42,13 +50,40 @@ const Navbar = () => {
           ))}
         </nav>
 
-        <button
-          type="button"
-          className="hidden h-11 w-11 items-center justify-center rounded-full border border-primary/25 bg-mint text-ink transition duration-200 hover:border-primary hover:bg-white lg:inline-flex"
-          aria-label="Open account"
-        >
-          <UserRound size={18} strokeWidth={2.4} />
-        </button>
+        <div className="hidden items-center gap-4 lg:flex">
+          {isAuthenticated ? (
+            <>
+              <NavLink
+                to="/profile"
+                className="text-sm font-semibold text-ink transition duration-200 hover:text-primary"
+              >
+                {user?.name || 'Account'}
+              </NavLink>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="rounded-full border border-primary/25 bg-mint px-4 py-2 text-sm font-semibold text-ink transition duration-200 hover:border-primary hover:bg-white"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink
+                to="/login"
+                className="text-sm font-semibold text-ink transition duration-200 hover:text-primary"
+              >
+                Login
+              </NavLink>
+              <NavLink
+                to="/register"
+                className="rounded-full border border-primary/25 bg-mint px-4 py-2 text-sm font-semibold text-ink transition duration-200 hover:border-primary hover:bg-white"
+              >
+                Sign up
+              </NavLink>
+            </>
+          )}
+        </div>
 
         <button
           type="button"
@@ -73,13 +108,44 @@ const Navbar = () => {
                 {item.label}
               </NavLink>
             ))}
-            <button
-              type="button"
-              className="mt-2 inline-flex h-11 items-center justify-center gap-2 rounded-md border border-line bg-surface text-sm font-semibold text-ink transition duration-200 hover:border-primary hover:bg-white"
-            >
-              <UserRound size={17} />
-              Account
-            </button>
+            {isAuthenticated ? (
+              <div className="mt-2 space-y-2">
+                <NavLink
+                  to="/profile"
+                  className="block rounded-md px-3 py-3 text-sm font-semibold text-ink transition duration-200 hover:bg-mint hover:text-primary"
+                  onClick={() => setOpen(false)}
+                >
+                  {user?.name || 'Profile'}
+                </NavLink>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleLogout()
+                    setOpen(false)
+                  }}
+                  className="w-full rounded-md border border-line bg-surface px-3 py-3 text-sm font-semibold text-ink transition duration-200 hover:border-primary hover:bg-white"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <>
+                <NavLink
+                  to="/login"
+                  className="block rounded-md px-3 py-3 text-sm font-semibold text-ink transition duration-200 hover:bg-mint hover:text-primary"
+                  onClick={() => setOpen(false)}
+                >
+                  Login
+                </NavLink>
+                <NavLink
+                  to="/register"
+                  className="block rounded-md px-3 py-3 text-sm font-semibold text-ink transition duration-200 hover:bg-mint hover:text-primary"
+                  onClick={() => setOpen(false)}
+                >
+                  Sign up
+                </NavLink>
+              </>
+            )}
           </div>
         </div>
       )}
