@@ -31,7 +31,7 @@ const ContactPage = () => {
   return (
     <div className="bg-white">
       <section className="bg-mint">
-        <div className="mx-auto grid max-w-[1080px] gap-12 px-5 py-16 sm:px-6 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:py-20">
+        <div className="page-container grid gap-12 py-16 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:py-20">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">Gift a stay</p>
             <h1 className="mt-4 max-w-3xl font-display text-4xl font-black leading-tight text-ink sm:text-5xl">
@@ -59,7 +59,7 @@ const ContactPage = () => {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-[1080px] gap-8 px-5 py-16 sm:px-6 lg:grid-cols-[0.84fr_1.16fr] lg:py-20">
+      <section className="page-container grid gap-8 py-16 lg:grid-cols-[0.72fr_1.28fr] lg:py-20">
         <div className="rounded-md border border-line bg-white p-7 shadow-panel">
           <h2 className="font-display text-xl font-black text-ink">Send us a message</h2>
           <form className="mt-7 space-y-5" onSubmit={handleSubmit} noValidate>
@@ -70,7 +70,7 @@ const ContactPage = () => {
                   type="text"
                   value={form.name}
                   onChange={handleChange('name')}
-                  className="mt-3 block min-h-12 w-full rounded-md border border-line bg-input px-4 text-sm text-ink outline-none transition duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20"
+                  className="quiet-field mt-3"
                 />
               </label>
               <label className="block text-sm font-semibold text-ink">
@@ -79,7 +79,7 @@ const ContactPage = () => {
                   type="email"
                   value={form.email}
                   onChange={handleChange('email')}
-                  className="mt-3 block min-h-12 w-full rounded-md border border-line bg-input px-4 text-sm text-ink outline-none transition duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20"
+                  className="quiet-field mt-3"
                 />
               </label>
             </div>
@@ -89,7 +89,7 @@ const ContactPage = () => {
                 rows="6"
                 value={form.message}
                 onChange={handleChange('message')}
-                className="mt-3 block w-full rounded-md border border-line bg-input px-4 py-4 text-sm text-ink outline-none transition duration-200 focus:border-primary focus:ring-4 focus:ring-primary/20"
+                className="quiet-field mt-3 min-h-[160px]"
               />
             </label>
             <div className="flex flex-col gap-3">

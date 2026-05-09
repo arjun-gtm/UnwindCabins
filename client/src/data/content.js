@@ -18,39 +18,6 @@ export const heroData = {
   ],
 }
 
-export const cabins = [
-  {
-    id: 'rustic-country-retreat',
-    location: 'Hampshire · England',
-    title: 'Rustic country retreat',
-    price: '£210pp',
-    description: 'Step outside and take in the stunning views. Our cabin sits on a quiet and secluded property, providing the perfect setting for a peaceful retreat.',
-    rating: 4.8,
-    reviews: 82,
-    image: image('photo-1449158743715-0a90ebb6d2d8', 900),
-  },
-  {
-    id: 'cozy-getaway-cabin',
-    location: 'Norfolk · England',
-    title: 'Cozy getaway cabin',
-    price: '£312pp',
-    description: 'Step outside and take in the stunning views. Our cabin sits on a quiet and secluded property, providing the perfect setting for a peaceful retreat.',
-    rating: 4.9,
-    reviews: 82,
-    image: image('photo-1542718610-a1d656d1884c', 900),
-  },
-  {
-    id: 'oakwood-hideaway',
-    location: 'Hampshire · England',
-    title: 'Oakwood hideaway',
-    price: '£210pp',
-    description: 'Step outside and take in the stunning views. Our cabin sits on a quiet and secluded property, providing the perfect setting for a peaceful retreat.',
-    rating: 4.7,
-    reviews: 82,
-    image: image('photo-1518780664697-55e3ad937233', 900),
-  },
-]
-
 export const inspirationItems = [
   {
     title: 'To Explore nature',

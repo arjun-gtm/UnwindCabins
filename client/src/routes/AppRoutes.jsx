@@ -7,6 +7,7 @@ import ContactPage from '../pages/ContactPage'
 import LoginPage from '../pages/LoginPage'
 import RegisterPage from '../pages/RegisterPage'
 import ProfilePage from '../pages/ProfilePage'
+import MyBookingsPage from '../pages/MyBookingsPage'
 import NotFoundPage from '../pages/NotFoundPage'
 import ProtectedRoute from './ProtectedRoute'
 
@@ -16,10 +17,12 @@ const AppRoutes = () => (
     <Route path="/about" element={<AboutPage />} />
     <Route path="/cabins" element={<CabinsPage />} />
     <Route path="/cabins/:cabinId" element={<CabinDetailPage />} />
+    <Route path="/packages/:slug" element={<CabinDetailPage />} />
     <Route path="/contact" element={<ContactPage />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path="/register" element={<RegisterPage />} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+    <Route path="/bookings" element={<ProtectedRoute><MyBookingsPage /></ProtectedRoute>} />
     <Route path="*" element={<NotFoundPage />} />
   </Routes>
 )

@@ -19,7 +19,7 @@ const pillars = [
 const AboutPage = () => (
   <div className="bg-white">
     <section className="bg-mint">
-      <div className="mx-auto grid max-w-[1080px] gap-12 px-5 py-16 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:py-20">
+      <div className="page-container grid gap-12 py-16 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:py-20">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -55,7 +55,7 @@ const AboutPage = () => (
       </div>
     </section>
 
-    <section className="mx-auto max-w-[1080px] px-5 py-16 sm:px-6 lg:py-20">
+    <section className="page-container py-16 lg:py-20">
       <div className="grid gap-4 md:grid-cols-3">
         {pillars.map((item) => (
           <motion.article
@@ -70,6 +70,24 @@ const AboutPage = () => (
             <p className="mt-4 text-sm leading-7 text-body">{item.description}</p>
           </motion.article>
         ))}
+      </div>
+      <div className="mt-16 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div className="overflow-hidden rounded-md bg-card shadow-panel">
+          <img
+            src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1600&q=85"
+            alt="Mountain landscape in Nepal"
+            className="aspect-[1.9/1] w-full object-cover"
+          />
+        </div>
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">Why Nepal</p>
+          <h2 className="mt-4 max-w-2xl font-display text-3xl font-black leading-tight text-ink">
+            Packages shaped for mountain calm, culture, and easy planning.
+          </h2>
+          <p className="mt-5 max-w-2xl text-sm leading-7 text-body">
+            From lakeside Pokhara to Chitwan wildlife and Himalayan trails, every trip is built around a clear route, trusted local support, and space to breathe.
+          </p>
+        </div>
       </div>
     </section>
   </div>

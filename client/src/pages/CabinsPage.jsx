@@ -3,33 +3,39 @@ import { motion } from 'framer-motion'
 import { Search } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 import CabinCard from '../components/CabinCard'
-import { cabins } from '../data/content'
+import { getPackages } from '../services/packageService'
 
 const CabinsPage = () => {
   const location = useLocation()
   const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search])
-  const initialQuery = searchParams.get('where') ?? ''
+  const initialQuery = searchParams.get('search') ?? searchParams.get('where') ?? ''
   const [query, setQuery] = useState(initialQuery)
+  const [packages, setPackages] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     setQuery(initialQuery)
   }, [initialQuery])
 
-  const filteredCabins = useMemo(() => {
-    const trimmedQuery = query.toLowerCase().trim()
-    if (!trimmedQuery) return cabins
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setLoading(true)
+      setError('')
 
-    return cabins.filter((cabin) =>
-      [cabin.title, cabin.location, cabin.description].some((text) =>
-        text.toLowerCase().includes(trimmedQuery)
-      )
-    )
+      getPackages({ search: query.trim(), limit: 24 })
+        .then((response) => setPackages(response.data || []))
+        .catch(() => setError('Failed to load packages. Please try again.'))
+        .finally(() => setLoading(false))
+    }, 250)
+
+    return () => window.clearTimeout(timeoutId)
   }, [query])
 
   return (
     <div className="bg-white">
       <section className="bg-mint">
-        <div className="mx-auto max-w-[1080px] px-5 py-16 sm:px-6 lg:py-20">
+        <div className="page-container py-16 lg:py-20">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -49,7 +55,7 @@ const CabinsPage = () => {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1080px] px-5 py-16 sm:px-6 lg:py-20">
+      <section className="page-container py-16 lg:py-20">
         <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <label className="flex min-h-[56px] w-full max-w-xl items-center gap-3 rounded-md border border-line bg-input px-4 text-sm text-body">
             <Search className="h-4 w-4 text-body" />
@@ -62,19 +68,24 @@ const CabinsPage = () => {
             />
           </label>
           <p className="text-sm text-body">
-            {filteredCabins.length} cabin{filteredCabins.length === 1 ? '' : 's'} available
+            {packages.length} package{packages.length === 1 ? '' : 's'} available
           </p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredCabins.map((cabin) => (
-            <CabinCard key={cabin.id} cabin={cabin} />
+          {loading &&
+            Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="h-[430px] animate-pulse rounded-md bg-card/80 shadow-panel" />
+            ))}
+          {!loading && error && <p className="col-span-full text-sm text-body">{error}</p>}
+          {!loading && !error && packages.map((cabin) => (
+            <CabinCard key={cabin._id || cabin.slug} cabin={cabin} />
           ))}
         </div>
 
-        {filteredCabins.length === 0 && (
+        {!loading && !error && packages.length === 0 && (
           <p className="mt-8 text-sm text-body">
-            No cabins match your search. Try a different location, name, or keyword.
+            No packages found.
           </p>
         )}
       </section>

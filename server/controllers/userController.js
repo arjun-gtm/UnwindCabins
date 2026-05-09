@@ -4,20 +4,29 @@ import jwt from 'jsonwebtoken';
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, contactNumber = '', address = '' } = req.body;
     const existing = await User.findOne({ email });
     if (existing) {
       return res.status(400).json({ message: 'Email already in use' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword });
+    const user = new User({ name, email, contactNumber, address, password: hashedPassword });
     await user.save();
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.status(201).json({
       token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        contactNumber: user.contactNumber,
+        address: user.address,
+        role: user.role,
+        profileImage: user.profileImage,
+        createdAt: user.createdAt,
+      },
     });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -32,9 +41,56 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        contactNumber: user.contactNumber,
+        address: user.address,
+        role: user.role,
+        profileImage: user.profileImage,
+        createdAt: user.createdAt,
+      },
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+export const updateMe = async (req, res) => {
+  try {
+    const { name, contactNumber, address, profileImage } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (name) user.name = name;
+    if (contactNumber !== undefined) user.contactNumber = contactNumber;
+    if (address !== undefined) user.address = address;
+    if (profileImage !== undefined) user.profileImage = profileImage;
+
+    await user.save();
+
+    res.json({
+      success: true,
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        contactNumber: user.contactNumber,
+        address: user.address,
+        role: user.role,
+        profileImage: user.profileImage,
+        createdAt: user.createdAt,
+      },
+      message: 'Profile updated',
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 

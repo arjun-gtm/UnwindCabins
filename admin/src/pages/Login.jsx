@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useAuth } from '../services/authService';
 
 const Login = () => {
@@ -12,9 +13,10 @@ const Login = () => {
     e.preventDefault();
     try {
       await login(email, password);
+      toast.success('Welcome back, admin.');
       navigate('/');
     } catch (err) {
-      alert('Login failed');
+      toast.error(err.response?.data?.message || 'Login failed.');
     }
   };
 

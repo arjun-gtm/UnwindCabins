@@ -17,6 +17,31 @@ export const AuthProvider = ({ children }) => {
         setUser(JSON.parse(storedUser));
         setIsAuthenticated(true);
       }
+
+      request('/users/me')
+        .then((data) => {
+          const nextUser = {
+            id: data._id || data.id,
+            name: data.name,
+            email: data.email,
+            contactNumber: data.contactNumber,
+            address: data.address,
+            role: data.role,
+            profileImage: data.profileImage,
+            createdAt: data.createdAt,
+          };
+          localStorage.setItem('user', JSON.stringify(nextUser));
+          setUser(nextUser);
+          setIsAuthenticated(true);
+        })
+        .catch(() => {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setUser(null);
+          setIsAuthenticated(false);
+        })
+        .finally(() => setLoading(false));
+      return;
     }
 
     setLoading(false);
@@ -54,10 +79,40 @@ export const AuthProvider = ({ children }) => {
     return data.user;
   };
 
-  const register = async (name, email, password) => {
+  const refreshUser = async () => {
+    const data = await request('/users/me');
+    const nextUser = {
+      id: data._id || data.id,
+      name: data.name,
+      email: data.email,
+      contactNumber: data.contactNumber,
+      address: data.address,
+      role: data.role,
+      profileImage: data.profileImage,
+      createdAt: data.createdAt,
+    };
+    localStorage.setItem('user', JSON.stringify(nextUser));
+    setUser(nextUser);
+    setIsAuthenticated(true);
+    return nextUser;
+  };
+
+  const updateProfile = async (payload) => {
+    const response = await request('/users/me', {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+    const nextUser = response.data;
+    localStorage.setItem('user', JSON.stringify(nextUser));
+    setUser(nextUser);
+    setIsAuthenticated(true);
+    return nextUser;
+  };
+
+  const register = async (name, email, password, contactNumber, address) => {
     const data = await request('/users/register', {
       method: 'POST',
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password, contactNumber, address }),
     });
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
@@ -74,7 +129,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, loading, login, register, logout, refreshUser, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, CalendarDays, MapPinned, Play, Star, UsersRound } from 'lucide-react'
+import toast from 'react-hot-toast'
+import { ArrowRight, CalendarDays, ChevronDown, ChevronUp, MapPinned, Play, Star, UsersRound } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import Button from '../components/Button'
 import CabinCard from '../components/CabinCard'
@@ -8,7 +9,6 @@ import InspirationCard from '../components/InspirationCard'
 import FAQItem from '../components/FAQItem'
 import {
   heroData,
-  cabins,
   inspirationItems,
   reviewSection,
   mediaSection,
@@ -16,6 +16,7 @@ import {
   escapeSection,
   faqs,
 } from '../data/content'
+import { getFeaturedPackages } from '../services/packageService'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 18 },
@@ -63,8 +64,8 @@ const SectionHeader = ({ title, description, action, to = '/' }) => (
 )
 
 const SearchField = ({ icon: Icon, label, children }) => (
-  <label className="flex min-h-14 min-w-0 items-center gap-3 rounded-md bg-input px-4 text-sm font-medium text-body">
-    <Icon className="h-4 w-4 shrink-0 text-ink/70" />
+  <label className="flex min-h-14 min-w-0 items-center gap-3 rounded-md border border-transparent bg-input px-4 text-sm font-medium text-body transition focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10">
+    <Icon className="h-4 w-4 shrink-0 text-primary" />
     <span className="sr-only">{label}</span>
     {children}
   </label>
@@ -72,25 +73,59 @@ const SearchField = ({ icon: Icon, label, children }) => (
 
 const HomePage = () => {
   const navigate = useNavigate()
+  const [featuredPackages, setFeaturedPackages] = useState([])
+  const [packagesLoading, setPackagesLoading] = useState(true)
+  const [packagesError, setPackagesError] = useState('')
   const [searchValues, setSearchValues] = useState({
     where: '',
     checkIn: '',
     checkOut: '',
-    guests: '2 guests',
+    guests: 2,
   })
+  const today = new Date().toISOString().split('T')[0]
+
+  useEffect(() => {
+    let mounted = true
+
+    getFeaturedPackages()
+      .then((response) => {
+        if (mounted) setFeaturedPackages(response.data || [])
+      })
+      .catch(() => {
+        if (mounted) setPackagesError('Failed to load packages. Please try again.')
+      })
+      .finally(() => {
+        if (mounted) setPackagesLoading(false)
+      })
+
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   const handleSearchChange = (field) => (event) => {
     setSearchValues((prev) => ({ ...prev, [field]: event.target.value }))
+  }
+
+  const adjustGuests = (direction) => {
+    setSearchValues((prev) => {
+      const nextGuests = direction === 'up' ? prev.guests + 1 : prev.guests - 1
+      return { ...prev, guests: Math.min(Math.max(nextGuests, 1), 12) }
+    })
   }
 
   const handleSearchSubmit = (event) => {
     event.preventDefault()
 
     const params = new URLSearchParams()
-    if (searchValues.where.trim()) params.set('where', searchValues.where.trim())
+    if (searchValues.where.trim()) params.set('search', searchValues.where.trim())
+    if (searchValues.checkIn && searchValues.checkOut && searchValues.checkOut <= searchValues.checkIn) {
+      toast.error('Check-out must be after check-in.')
+      return
+    }
     if (searchValues.checkIn) params.set('checkIn', searchValues.checkIn)
     if (searchValues.checkOut) params.set('checkOut', searchValues.checkOut)
-    if (searchValues.guests) params.set('guests', searchValues.guests)
+    if (searchValues.guests) params.set('guests', `${searchValues.guests} guests`)
 
     const queryString = params.toString()
     navigate(`/cabins${queryString ? `?${queryString}` : ''}`)
@@ -148,7 +183,7 @@ const HomePage = () => {
         onSubmit={handleSearchSubmit}
         className="w-full min-w-0 max-w-[350px] rounded-md bg-white p-6 shadow-search sm:mx-auto sm:max-w-none"
       >
-        <div className="grid min-w-0 gap-2 md:grid-cols-[1.45fr_1fr_1fr_1fr_1.55fr]">
+        <div className="grid min-w-0 gap-2 lg:grid-cols-[1.35fr_1fr_1fr_1fr_1.35fr]">
           <SearchField icon={MapPinned} label="I want to go">
             <input
               type="text"
@@ -161,31 +196,49 @@ const HomePage = () => {
           <SearchField icon={CalendarDays} label="Check in">
             <input
               type="date"
+              min={today}
               value={searchValues.checkIn}
               onChange={handleSearchChange('checkIn')}
-              className="min-w-0 w-full rounded-md border border-line bg-white px-3 py-2 text-sm text-ink outline-none placeholder:text-body focus:border-primary focus:ring-4 focus:ring-primary/20"
+              className="min-w-0 w-full bg-transparent text-sm text-ink outline-none placeholder:text-body"
             />
           </SearchField>
           <SearchField icon={CalendarDays} label="Check out">
             <input
               type="date"
+              min={searchValues.checkIn || today}
               value={searchValues.checkOut}
               onChange={handleSearchChange('checkOut')}
-              className="min-w-0 w-full rounded-md border border-line bg-white px-3 py-2 text-sm text-ink outline-none placeholder:text-body focus:border-primary focus:ring-4 focus:ring-primary/20"
+              className="min-w-0 w-full bg-transparent text-sm text-ink outline-none placeholder:text-body"
             />
           </SearchField>
-          <SearchField icon={UsersRound} label="Travellers">
-            <select
-              value={searchValues.guests}
-              onChange={handleSearchChange('guests')}
-              className="min-w-0 w-full appearance-none bg-transparent text-sm text-body outline-none"
-            >
-              <option>1 guest</option>
-              <option>2 guests</option>
-              <option>3 guests</option>
-              <option>4 guests</option>
-            </select>
-          </SearchField>
+          <div className="flex min-h-14 min-w-0 items-center justify-between gap-3 rounded-md border border-transparent bg-input px-4 text-sm font-medium text-body transition focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10">
+            <div className="flex min-w-0 items-center gap-3">
+              <UsersRound className="h-4 w-4 shrink-0 text-primary" />
+              <span className="truncate text-sm text-ink">
+                {searchValues.guests} guest{searchValues.guests === 1 ? '' : 's'}
+              </span>
+            </div>
+            <div className="flex shrink-0 overflow-hidden rounded-md border border-line bg-white">
+              <button
+                type="button"
+                onClick={() => adjustGuests('down')}
+                disabled={searchValues.guests <= 1}
+                className="flex h-8 w-8 items-center justify-center text-primary transition hover:bg-mint disabled:cursor-not-allowed disabled:text-muted"
+                aria-label="Decrease travellers"
+              >
+                <ChevronDown size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={() => adjustGuests('up')}
+                disabled={searchValues.guests >= 12}
+                className="flex h-8 w-8 items-center justify-center text-primary transition hover:bg-mint disabled:cursor-not-allowed disabled:text-muted"
+                aria-label="Increase travellers"
+              >
+                <ChevronUp size={16} />
+              </button>
+            </div>
+          </div>
           <Button type="submit" className="h-14 w-full whitespace-nowrap px-4 text-[0.82rem] sm:text-sm">
             Find available cabins
           </Button>
@@ -203,9 +256,19 @@ const HomePage = () => {
         />
       </motion.div>
       <div className="mt-11 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {cabins.map((cabin) => (
-          <CabinCard key={cabin.id} cabin={cabin} />
+        {packagesLoading &&
+          Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="h-[430px] animate-pulse rounded-md bg-card/80 shadow-panel" />
+          ))}
+        {!packagesLoading && packagesError && (
+          <p className="col-span-full text-sm text-body">{packagesError}</p>
+        )}
+        {!packagesLoading && !packagesError && featuredPackages.map((cabin) => (
+          <CabinCard key={cabin._id || cabin.slug} cabin={cabin} />
         ))}
+        {!packagesLoading && !packagesError && featuredPackages.length === 0 && (
+          <p className="col-span-full text-sm text-body">No packages found.</p>
+        )}
       </div>
     </section>
 

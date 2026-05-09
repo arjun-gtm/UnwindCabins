@@ -1,9 +1,10 @@
-import { useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { Menu, UserRound, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Link, NavLink } from 'react-router-dom'
+import { Menu, X } from 'lucide-react'
 import { useAuth } from '../services/authService'
 
 const navItems = [
+  { label: 'Home', to: '/' },
   { label: 'Our cabins', to: '/cabins' },
   { label: 'Get inspired', to: '/about' },
   { label: 'Gift a stay', to: '/contact' },
@@ -19,12 +20,33 @@ const Brand = ({ light = false }) => (
 
 const Navbar = () => {
   const [open, setOpen] = useState(false)
-  const navigate = useNavigate()
-  const { user, isAuthenticated, logout } = useAuth()
+  const { user, isAuthenticated } = useAuth()
+  const [profileImage, setProfileImage] = useState('')
 
-  const handleLogout = () => {
-    logout()
-    navigate('/')
+  useEffect(() => {
+    const syncProfileImage = () => {
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}')
+      setProfileImage(storedUser.profileImage || user?.profileImage || '')
+    }
+
+    syncProfileImage()
+    window.addEventListener('storage', syncProfileImage)
+    window.addEventListener('focus', syncProfileImage)
+
+    return () => {
+      window.removeEventListener('storage', syncProfileImage)
+      window.removeEventListener('focus', syncProfileImage)
+    }
+  }, [user?.profileImage])
+
+  const getInitials = (name) => {
+    if (!name) return 'U'
+    return name
+      .split(' ')
+      .map((word) => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
   }
 
   return (
@@ -52,21 +74,18 @@ const Navbar = () => {
 
         <div className="hidden items-center gap-4 lg:flex">
           {isAuthenticated ? (
-            <>
-              <NavLink
-                to="/profile"
-                className="text-sm font-semibold text-ink transition duration-200 hover:text-primary"
-              >
-                {user?.name || 'Account'}
-              </NavLink>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="rounded-full border border-primary/25 bg-mint px-4 py-2 text-sm font-semibold text-ink transition duration-200 hover:border-primary hover:bg-white"
-              >
-                Logout
-              </button>
-            </>
+            <NavLink
+              to="/profile"
+              className="group inline-flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-primary/20 bg-mint text-sm font-bold text-primary transition duration-200 hover:border-primary hover:bg-white focus:outline-none focus:ring-4 focus:ring-primary/15"
+              aria-label="Open profile"
+              title={user?.name || 'Profile'}
+            >
+              {profileImage ? (
+                <img src={profileImage} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <span>{getInitials(user?.name)}</span>
+              )}
+            </NavLink>
           ) : (
             <>
               <NavLink
@@ -112,21 +131,18 @@ const Navbar = () => {
               <div className="mt-2 space-y-2">
                 <NavLink
                   to="/profile"
-                  className="block rounded-md px-3 py-3 text-sm font-semibold text-ink transition duration-200 hover:bg-mint hover:text-primary"
+                  className="flex items-center gap-3 rounded-md px-3 py-3 text-sm font-semibold text-ink transition duration-200 hover:bg-mint hover:text-primary"
                   onClick={() => setOpen(false)}
                 >
-                  {user?.name || 'Profile'}
+                  <span className="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-primary text-xs font-bold text-white">
+                    {profileImage ? (
+                      <img src={profileImage} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      getInitials(user?.name)
+                    )}
+                  </span>
+                  <span>{user?.name || 'Profile'}</span>
                 </NavLink>
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleLogout()
-                    setOpen(false)
-                  }}
-                  className="w-full rounded-md border border-line bg-surface px-3 py-3 text-sm font-semibold text-ink transition duration-200 hover:border-primary hover:bg-white"
-                >
-                  Logout
-                </button>
               </div>
             ) : (
               <>
